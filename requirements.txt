@@ -1,0 +1,27 @@
+# Web Framework
+django>=5.0
+djangorestframework
+django-environ
+django-htmx
+
+# AI & LLM Orchestration
+langchain
+langchain-openai
+langchain-community
+chromadb
+pypdf
+tiktoken
+pytesseract
+
+# Task Queue & Async
+celery
+redis
+
+# Storage & Production
+django-storages[s3]
+boto3
+psycopg2-binary
+gunicorn
+
+# Utilities
+python-dotenv
