@@ -1,5 +1,5 @@
-# Use a slim version of Python
-FROM python:3.11-slim-bullseye
+# Use the newer bookworm image for better SQLite compatibility
+FROM python:3.12-slim-bookworm
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -8,12 +8,13 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies (for OCR and Postgres)
-RUN apt-get update && apt-get install -y \
+# Install system dependencies with extra reliability
+RUN apt-get update --fix-missing && apt-get install -y \
     build-essential \
     libpq-dev \
     tesseract-ocr \
     libtesseract-dev \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies

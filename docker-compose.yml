@@ -4,8 +4,11 @@ services:
   # 1. The Redis Broker (for Celery)
   redis:
     image: redis:7-alpine
+    container_name: redis_container 
     ports:
       - "6379:6379"
+ 
+
 
   # 2. The Django Web App
   web:
@@ -40,3 +43,4 @@ volumes:
   media_volume:
   vector_volume:
   postgres_data:
+  
