@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocAI — Intelligent Document Q&amp;A</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <!-- Background grid -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-orb orb-1" aria-hidden="true"></div>
+  <div class="bg-orb orb-2" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <!-- Header -->
+    <header class="site-header">
+      <div class="logo">
+        <span class="logo-mark">◈</span>
+        <span class="logo-text">DocAI</span>
+      </div>
+      <div class="header-pill" id="statusPill">
+        <span class="status-dot"></span>
+        <span class="status-text">Ready</span>
+      </div>
+    </header>
+
+    <!-- Main layout -->
+    <main class="main-layout">
+
+      <!-- LEFT PANEL — Upload -->
+      <section class="panel panel-upload" id="uploadPanel">
+        <div class="panel-label">01 / UPLOAD</div>
+        <h2 class="panel-title">Drop your<br /><em>document</em></h2>
+        <p class="panel-sub">PDF, DOCX, TXT or MD · up to 10 MB</p>
+
+        <!-- Drop zone -->
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Upload document">
+          <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.md" hidden />
+          <div class="drop-icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="12" width="32" height="28" rx="3" stroke="currentColor" stroke-width="2"/>
+              <path d="M24 6v22M18 22l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="drop-primary">Drag &amp; drop here</p>
+          <p class="drop-secondary">or <button type="button" class="inline-btn" id="browseBtn">browse files</button></p>
+        </div>
+
+        <!-- File info (hidden until file chosen) -->
+        <div class="file-info" id="fileInfo" hidden>
+          <div class="file-card">
+            <span class="file-icon">📄</span>
+            <div class="file-details">
+              <span class="file-name" id="fileName">—</span>
+              <span class="file-size" id="fileSize">—</span>
+            </div>
+            <button type="button" class="remove-btn" id="removeFile" aria-label="Remove file">✕</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="uploadBtn" disabled>
+          <span class="btn-text">Analyse Document</span>
+          <span class="btn-icon">→</span>
+        </button>
+
+        <!-- Session badge -->
+        <div class="session-badge" id="sessionBadge" hidden>
+          <span class="badge-label">SESSION</span>
+          <span class="badge-id" id="sessionId">—</span>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL — Chat -->
+      <section class="panel panel-chat" id="chatPanel">
+        <div class="panel-label">02 / CONVERSATION</div>
+        <h2 class="panel-title">Ask your<br /><em>questions</em></h2>
+
+        <!-- Chat messages -->
+        <div class="chat-window" id="chatWindow" role="log" aria-live="polite" aria-label="Conversation">
+          <div class="chat-empty" id="chatEmpty">
+            <span class="empty-icon">◈</span>
+            <p>Upload a document to begin your conversation</p>
+          </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="chat-input-area">
+          <textarea
+            id="questionInput"
+            class="question-input"
+            placeholder="Type your question here…"
+            rows="2"
+            disabled
+            aria-label="Question input"
+          ></textarea>
+          <button type="button" class="btn btn-send" id="sendBtn" disabled aria-label="Send question">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="chat-hint" id="chatHint">Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to send</div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toastContainer" aria-live="assertive"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
