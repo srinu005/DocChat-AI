@@ -1,25 +1,31 @@
-# DocAI — Intelligent Document Q&A
+# DocChat-AI — Intelligent Document Q&A
 
 Upload any document (PDF, DOCX, TXT, Markdown) and have a multi-turn conversation about its contents — powered by **Google Gemini**, **FastAPI**, **Celery**, and **Redis**.
 
 ---
+## Key Features
 
-## Architecture
+- Upload PDF, DOCX, TXT, and Markdown files up to 10 MB and 
+  instantly start a multi-turn AI conversation about the content
+- Powered by Google Gemini 1.5 Flash for context-aware, 
+  document-grounded answers
+- Background question processing via Celery workers keeps API 
+  response times under 200ms regardless of model latency
+- Three-layer Redis caching for document text, conversation 
+  history, and answer deduplication to eliminate redundant AI calls
+- Drag and drop file upload with real-time chat UI built in 
+  vanilla HTML, CSS, and JavaScript — no frontend framework needed
+- Multi-turn conversation memory — each answer is aware of the 
+  full chat history within the session
+- Production-ready containerization with multi-stage Docker build 
+  separating API and Celery worker into independent services
+- 22 pytest tests covering all service, cache, and API layers 
+  using fakeredis and dependency injection for fast isolated testing
+- Clean layered architecture following SOLID principles with 
+  single-responsibility services for parsing, caching, and AI inference
+- One command deployment with Docker Compose orchestrating 
+  FastAPI, Celery worker, and Redis with health checks
 
-```
-┌────────────┐    ┌─────────────────────────────────────────┐
-│  Browser   │───▶│  FastAPI  (api, upload, health routers)  │
-│  HTML/CSS/ │◀───│  Jinja2 templates · Static files         │
-│  JS        │    └───────────┬────────────┬─────────────────┘
-└────────────┘                │            │
-                              │ enqueue    │ dependency
-                     ┌────────▼───────┐   ▼
-                     │ Celery Worker  │  Redis
-                     │ (qa_tasks.py)  │  ├── document text cache
-                     │                │  ├── conversation history
-                     │  GeminiService │  └── answer cache
-                     └────────────────┘
-```
 
 ## Tech Stack
 
@@ -38,23 +44,18 @@ Upload any document (PDF, DOCX, TXT, Markdown) and have a multi-turn conversatio
 
 ## Quick Start
 
-### 1. Clone
 
-```bash
-git clone https://github.com/your-org/docai.git
-cd docai
-```
 
 ### 2. Configure
 
-```bash
-cp .env.example .env
+```cmd
+cd .env.example .env
 # Edit .env and add your GOOGLE_API_KEY
 ```
 
 ### 3. Run with Docker Compose
 
-```bash
+```cmd
 docker compose up --build
 ```
 
@@ -64,7 +65,7 @@ Open **http://localhost:8000** in your browser.
 
 ## Local Development (without Docker)
 
-```bash
+```cmd
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -83,7 +84,7 @@ celery -A app.core.celery_app.celery_app worker --loglevel=info
 
 ## Running Tests
 
-```bash
+```cmd
 pytest -v
 ```
 
@@ -166,19 +167,4 @@ docai/
 └── .env.example
 ```
 
----
 
-## Git Workflow
-
-```bash
-# Feature branch
-git checkout -b feature/your-feature
-
-# Commit with conventional commit messages
-git commit -m "feat: add conversation history export"
-git commit -m "fix: handle empty PDF pages"
-git commit -m "test: add cache TTL expiry tests"
-
-# Push & open PR
-git push origin feature/your-feature
-```
