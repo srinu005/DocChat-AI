@@ -13,7 +13,7 @@ const API = {
 };
 
 const POLL_INTERVAL_MS = 1500;
-const POLL_MAX_RETRIES = 40;
+const POLL_MAX_RETRIES = 160;
 
 let state = {
   sessionId:  null,

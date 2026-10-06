@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     )
 
     # Google AI
-    google_api_key: str = "your_google_api_key_here"
-    gemini_model: str = "gemini-2.0-flash"  # Use gemini-pro as fallback if unavailable
+    google_api_key: str 
+    gemini_model: str = "gemini-3.5-latest"  # Use gemini-pro as fallback if unavailable
 
     # Redis & Celery
     redis_url: str = "redis://localhost:6379/0"
