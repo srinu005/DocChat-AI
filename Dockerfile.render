@@ -1,0 +1,46 @@
+# Dedicated Dockerfile for Render's free tier.
+#
+# WHY THIS FILE EXISTS, SEPARATE FROM THE MAIN Dockerfile:
+# Render's free tier only supports Web Services -- NOT Background Workers
+# (those require a paid plan). To run the Celery worker for free, this image
+# runs BOTH the Celery worker and the Uvicorn server inside one container.
+#
+# The main Dockerfile's multi-stage "worker" stage does NOT copy frontend/
+# (it doesn't need to, for its own separate-container use case) -- but Docker
+# builds the LAST stage by default when no target is specified, so a naive
+# build of the main Dockerfile without an explicit target would produce an
+# image missing frontend/, and the app would crash on boot with:
+#   RuntimeError: Directory 'frontend/static' does not exist
+# (confirmed by direct testing). This dedicated file avoids that risk by
+# copying everything needed, unconditionally.
+
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+COPY app/       ./app/
+COPY frontend/  ./frontend/
+
+# No .env is copied here -- Render injects real environment variables
+# directly, and pydantic-settings reads real OS env vars before any .env
+# file, so baking one in would be pointless and risks shipping stale values.
+
+RUN mkdir -p /tmp/docai_uploads
+
+EXPOSE 8000
+
+# Run the Celery worker in the background (--pool=solo: single process, no
+# forking -- the free tier's RAM is small, and this is a low-traffic demo
+# deployment, so concurrency isn't needed), then run Uvicorn in the
+# foreground so Render's health check has a process bound to the port.
+# NOTE: there's no supervisor here -- if the worker process dies, it does
+# not auto-restart. Acceptable for a portfolio demo; would need a proper
+# process manager (e.g. supervisord) for anything beyond that.
+CMD ["sh", "-c", "celery -A app.core.celery_app.celery_app worker --loglevel=info --pool=solo & uvicorn app.main:app --host 0.0.0.0 --port 8000"]

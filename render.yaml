@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: docchat-ai
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false          # paste your real Gemini key in the dashboard
+      - key: GEMINI_MODEL
+        value: gemini-3.8-flash   # change if this 404s -- see README for how to check your live model list
+      # --- Redis: two SEPARATE free Upstash database instances ---
+      # Why two, instead of using /0 and /1 on one instance: Upstash's
+      # exact support for the Redis SELECT command (logical multi-database
+      # separation) could not be confirmed with certainty. Using two
+      # separate free instances (Upstash allows 10 per account, confirmed)
+      # sidesteps that uncertainty entirely -- each gets its own host,
+      # guaranteed isolated, no SELECT involved.
+      - key: REDIS_URL
+        sync: false          # Upstash instance #1 -- rediss://... (used for app cache + Celery broker)
+      - key: CELERY_BROKER_URL
+        sync: false          # SAME value as REDIS_URL above
+      - key: CELERY_RESULT_BACKEND
+        sync: false          # Upstash instance #2 -- a DIFFERENT rediss://... URL
+      - key: APP_ENV
+        value: production
